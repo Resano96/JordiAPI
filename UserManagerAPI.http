@@ -2,7 +2,7 @@
 ### get health
 GET {{UserManagerAPI_HostAddress}}/api/health/
 Accept: application/json
-
+####################################################
 ### get users
 GET {{UserManagerAPI_HostAddress}}/api/users/
 Accept: application/json
@@ -28,3 +28,30 @@ Content-Type: application/json
 ### Eliminar usuario
 DELETE http://localhost:5207/api/users/1
 
+####################################################
+### Prueba body
+POST http://localhost:5207/api/debug/body
+Content-Type: application/json
+
+{
+  "name": "Ana García",
+  "email": "ana@email.com"
+}
+### Prueba params
+GET http://localhost:5207/api/debug/params/25
+
+### Prueba
+GET http://localhost:5207/api/debug/query?role=ADMIN&isActive=true
+
+### Prueba headers
+GET http://localhost:5207/api/debug/headers
+Authorization: Bearer token-de-prueba
+
+### Prueba combinada
+PATCH http://localhost:5207/api/debug/users/7?notify=true
+Content-Type: application/json
+Authorization: Bearer token-de-prueba
+
+{
+  "name": "Nombre actualizado"
+}

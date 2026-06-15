@@ -48,3 +48,4 @@ Próximamente en la fase de base de datos.
 - [Día 2 - Preparación del proyecto](docs/dia-02-preparacion-proyecto.md)
 - [Día 3 - Primer endpoint](docs/dia-03-primer-endpoint.md)
 - [Día 4 - Métodos HTTP](docs/dia-04-metodos-http.md)
+- [Día 5 - JSON, body, params y headers](docs/dia-05-json-body-params-headers.md)
