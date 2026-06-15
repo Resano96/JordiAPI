@@ -1,6 +1,30 @@
 @UserManagerAPI_HostAddress = http://localhost:5207
-
+### get health
 GET {{UserManagerAPI_HostAddress}}/api/health/
 Accept: application/json
 
-###
+### get users
+GET {{UserManagerAPI_HostAddress}}/api/users/
+Accept: application/json
+
+### Crear usuario
+POST http://localhost:5207/api/users
+Content-Type: application/json
+
+{
+  "name": "Carlos Pérez",
+  "email": "carlos@email.com",
+  "password": "123456"
+}
+
+### Actualizar usuario
+PATCH http://localhost:5207/api/users/1
+Content-Type: application/json
+
+{
+  "name": "Carlos Actualizado"
+}
+
+### Eliminar usuario
+DELETE http://localhost:5207/api/users/1
+

@@ -46,3 +46,5 @@ Próximamente en la fase de base de datos.
 ## Documentación del reto
 
 - [Día 2 - Preparación del proyecto](docs/dia-02-preparacion-proyecto.md)
+- [Día 3 - Primer endpoint](docs/dia-03-primer-endpoint.md)
+- [Día 4 - Métodos HTTP](docs/dia-04-metodos-http.md)

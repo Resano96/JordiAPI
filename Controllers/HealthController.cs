@@ -13,6 +13,10 @@ public class HealthController : ControllerBase // ControllerBase da acceso a Ok(
     public IActionResult Get() // IActionResult es el tipo de retorno genérico para respuestas HTTP
     {
         // Ok() devuelve un 200 con el objeto JSON como cuerpo
-        return Ok(new { status = "ok", message = "UserManager API funcionando" });
+        return Ok(new {
+            status = "ok",
+            message = "UserManager API funcionando",
+            timestamp = DateTime.UtcNow // fecha y hora actual en formato UTC
+        });
     }
 }
