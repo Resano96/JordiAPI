@@ -55,3 +55,13 @@ Authorization: Bearer token-de-prueba
 {
   "name": "Nombre actualizado"
 }
+
+  ### Prueba request completa
+POST http://localhost:5207/api/debug/request?source=thunder
+Content-Type: application/json
+Authorization: Bearer token-de-prueba
+x-client-name: thunder-client
+
+{
+  "example": "datos de prueba"
+}

@@ -39,4 +39,17 @@ public class DebugController : Controller
         changes
     });
 
+    [HttpPost("request")]
+    public IActionResult TestRequest([FromQuery] string? source, [FromBody] object? body) =>
+    Ok(new
+    {
+        message = "Información completa de la petición",
+        method = Request.Method,
+        path = Request.Path.ToString(),
+        query = source,
+        authorization = Request.Headers["Authorization"].ToString(),
+        clientName = Request.Headers["x-client-name"].ToString(),
+        body
+    });
+
 }
