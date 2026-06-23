@@ -1,54 +1,162 @@
-@UserManagerAPI_HostAddress = http://localhost:5207
-### get health
-GET {{UserManagerAPI_HostAddress}}/api/health/
-Accept: application/json
-####################################################
-### get users
-GET {{UserManagerAPI_HostAddress}}/api/users/
+@host = http://localhost:5207
+
+###############################################
+# HEALTH
+###############################################
+
+### Estado de la API
+GET {{host}}/api/health
 Accept: application/json
 
-### Crear usuario
-POST http://localhost:5207/api/users
+
+###############################################
+# USERS - Lecturas
+###############################################
+
+### Listado de usuarios
+GET {{host}}/api/users
+Accept: application/json
+
+### Total de usuarios
+GET {{host}}/api/users/count
+
+### Solo usuarios activos
+GET {{host}}/api/users/active
+
+### Usuario por ID (existe)
+GET {{host}}/api/users/1
+
+### Usuario por ID (no existe -> 404)
+GET {{host}}/api/users/999
+
+### Usuario por ID (no numérico -> 400)
+GET {{host}}/api/users/abc
+
+
+###############################################
+# USERS - Escrituras
+###############################################
+
+
+###############################################
+# USERS - Pruebas Creacion
+###############################################
+
+### Crear usuario - body vacío (400)
+POST {{host}}/api/users
+Content-Type: application/json
+
+{}
+
+### Crear usuario - password corta (400)
+POST {{host}}/api/users
 Content-Type: application/json
 
 {
-  "name": "Carlos Pérez",
-  "email": "carlos@email.com",
+  "name": "Test",
+  "email": "test@email.com",
+  "password": "123"
+}
+
+### Crear usuario - email sin @ (400)
+POST {{host}}/api/users
+Content-Type: application/json
+
+{
+  "name": "Test",
+  "email": "testemail.com",
   "password": "123456"
 }
 
-### Actualizar usuario
-PATCH http://localhost:5207/api/users/1
+### Crear usuario - email duplicado (409)
+POST {{host}}/api/users
 Content-Type: application/json
 
 {
-  "name": "Carlos Actualizado"
+  "name": "Test",
+  "email": "ana@email.com",
+  "password": "123456"
 }
 
-### Eliminar usuario
-DELETE http://localhost:5207/api/users/1
+### Crear usuario - correcto (201)
+POST {{host}}/api/users
+Content-Type: application/json
 
-####################################################
-### Prueba body
-POST http://localhost:5207/api/debug/body
+{
+  "name": "Usuario Valido",
+  "email": "valido@email.com",
+  "password": "123456"
+}
+
+###############################################
+# USERS - Pruebas Actualizacion
+###############################################
+
+### Actualizar - body vacío (400)
+PATCH {{host}}/api/users/1
+Content-Type: application/json
+
+{}
+
+### Actualizar - email sin @ (400)
+PATCH {{host}}/api/users/1
+Content-Type: application/json
+
+{
+  "email": "malemail.com"
+}
+
+### Actualizar - email de otro usuario (409)
+PATCH {{host}}/api/users/1
+Content-Type: application/json
+
+{
+  "email": "carlos@email.com"
+}
+
+### Actualizar - correcto (200)
+PATCH {{host}}/api/users/1
+Content-Type: application/json
+
+{
+  "name": "Ana Actualizada"
+}
+
+### Desactivar usuario (borrado lógico)
+DELETE {{host}}/api/users/1
+
+### Usuarios inactivos
+GET {{host}}/api/users/inactive
+
+### Reactivar usuario
+PATCH {{host}}/api/users/1/reactivate
+
+
+###############################################
+# DEBUG - Pruebas de petición
+###############################################
+
+### Body
+POST {{host}}/api/debug/body
 Content-Type: application/json
 
 {
   "name": "Ana García",
   "email": "ana@email.com"
 }
-### Prueba params
-GET http://localhost:5207/api/debug/params/25
 
-### Prueba
-GET http://localhost:5207/api/debug/query?role=ADMIN&isActive=true
+### Route params
+GET {{host}}/api/debug/params/25
 
-### Prueba headers
-GET http://localhost:5207/api/debug/headers
+### Query params
+GET {{host}}/api/debug/query?role=ADMIN&isActive=true
+
+### Headers
+GET {{host}}/api/debug/headers
 Authorization: Bearer token-de-prueba
 
-### Prueba combinada
-PATCH http://localhost:5207/api/debug/users/7?notify=true
+### Combinada (params + query + headers + body)
+PATCH {{host}}/api/debug/users/7?notify=true
 Content-Type: application/json
 Authorization: Bearer token-de-prueba
 
@@ -56,8 +164,8 @@ Authorization: Bearer token-de-prueba
   "name": "Nombre actualizado"
 }
 
-  ### Prueba request completa
-POST http://localhost:5207/api/debug/request?source=thunder
+### Request completa
+POST {{host}}/api/debug/request?source=thunder
 Content-Type: application/json
 Authorization: Bearer token-de-prueba
 x-client-name: thunder-client
