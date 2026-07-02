@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using UserManagerAPI.Models;
+using UserManagerAPI.Errors;
 
 namespace UserManagerAPI.Controllers;
 
@@ -35,7 +36,7 @@ public class UsersController : ControllerBase
         var user = Users.FirstOrDefault(u => u.Id == id);
 
         if (user is null)
-            return NotFound(new { error = "Usuario no encontrado", id });
+            throw new AppException("Usuario no encontrado", 404);
 
         return Ok(new { message = "Usuario encontrado", data = user });
     }
@@ -44,24 +45,24 @@ public class UsersController : ControllerBase
     public IActionResult Create([FromBody] CreateUserDto dto)
     {
         if (string.IsNullOrWhiteSpace(dto.Name))
-            return BadRequest(new { error = "El nombre es obligatorio" });
+            throw new AppException("El nombre es obligatorio", 400);
 
         if (string.IsNullOrWhiteSpace(dto.Email))
-            return BadRequest(new { error = "El email es obligatorio" });
+            throw new AppException("El email es obligatorio", 400);
 
         if (string.IsNullOrWhiteSpace(dto.Password))
-            return BadRequest(new { error = "La contraseña es obligatoria" });
+            throw new AppException("La contraseña es obligatoria", 400);
 
         if (dto.Password.Length < 6)
-            return BadRequest(new { error = "La contraseña debe tener al menos 6 caracteres" });
+            throw new AppException("La contraseña debe tener al menos 6 caracteres", 400);
 
         if (!IsValidBasicEmail(dto.Email))
-            return BadRequest(new { error = "El email no tiene un formato válido" });
+            throw new AppException("El email no tiene un formato válido", 400);
 
         var email = NormalizeEmail(dto.Email);
 
         if (IsEmailTaken(email))
-            return Conflict(new { error = "El email ya está registrado" });
+            throw new AppException("El email ya está registrado", 409);
 
         var newId = Users.Count > 0 ? Users.Max(u => u.Id) + 1 : 1;
         var user = new User(newId, dto.Name.Trim(), email, dto.Role ?? "USER", true);
@@ -76,11 +77,11 @@ public class UsersController : ControllerBase
         var index = Users.FindIndex(u => u.Id == id);
 
         if (index == -1)
-            return NotFound(new { error = "Usuario no encontrado", id });
+            throw new AppException("Usuario no encontrado", 404);
 
         // Body vacío: no se envió ningún campo para cambiar
         if (dto.Name is null && dto.Email is null && dto.IsActive is null)
-            return BadRequest(new { error = "No se enviaron campos para actualizar" });
+            throw new AppException("No se enviaron campos para actualizar", 400);
 
         var current = Users[index];
 
@@ -89,13 +90,13 @@ public class UsersController : ControllerBase
         if (dto.Email is not null)
         {
             if (!IsValidBasicEmail(dto.Email))
-                return BadRequest(new { error = "El email no tiene un formato válido" });
+                throw new AppException("El email no tiene un formato válido", 400);
 
             email = NormalizeEmail(dto.Email);
 
             // excludeId: id -> ignoramos al propio usuario que estamos editando
             if (IsEmailTaken(email, id))
-                return Conflict(new { error = "El email ya está registrado" });
+                throw new AppException("El email ya está registrado", 409);
         }
 
         Users[index] = current with
@@ -114,7 +115,7 @@ public class UsersController : ControllerBase
         var index = Users.FindIndex(u => u.Id == id);
 
         if (index == -1)
-            return NotFound(new { error = "Usuario no encontrado", id });
+            throw new AppException("Usuario no encontrado", 404);
 
         // Si ya estaba inactivo, avisamos en vez de desactivar de nuevo
         if (!Users[index].IsActive)
@@ -132,7 +133,7 @@ public class UsersController : ControllerBase
         var index = Users.FindIndex(u => u.Id == id);
 
         if (index == -1)
-            return NotFound(new { error = "Usuario no encontrado", id });
+            throw new AppException("Usuario no encontrado", 404);
 
         if (Users[index].IsActive)
             return Ok(new { message = "El usuario ya estaba activo", data = Users[index] });

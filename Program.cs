@@ -1,3 +1,5 @@
+using UserManagerAPI.Middleware;
+
 // Crea el "constructor" de la app. Aquí registras todo lo que necesita antes de arrancar.
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,6 +9,10 @@ builder.Services.AddControllers();
 // Con todo registrado, construye la aplicación.
 // A partir de aquí ya no puedes añadir servicios.
 var app = builder.Build();
+
+// Nuestro middleware de errores envuelve TODA la petición.
+// Va antes de MapControllers para poder atrapar lo que ocurra en los controllers.
+app.UseMiddleware<ErrorHandlingMiddleware>();
 
 // Conecta las rutas definidas en los Controllers con la app.
 app.MapControllers();
